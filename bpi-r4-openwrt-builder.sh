@@ -39,7 +39,8 @@ git clone --depth=1 https://github.com/nikkinikki-org/OpenWrt-nikki
 git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
 git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git package/lucky
-git clone --depth=1  https://github.com/vernesong/OpenClash
+git clone --depth=1 https://github.com/vernesong/OpenClash
+git clone --depth=1 https://github.com/gaoderby/luci-app-kms.git
 popd
 
 ./scripts/feeds update -a
