@@ -26,12 +26,12 @@ bash ../mtk-openwrt-feeds/autobuild/unified/autobuild.sh filogic-mac80211-mt798x
 \cp -r ../my_files/luci-app-lite-watchdog/ feeds/luci/applications
 \cp -r ../my_files/luci-app-sms-tool-js-main/luci-app-sms-tool-js/ feeds/luci/applications
 
-git clone --depth=1 https://github.com/nikkinikki-org/OpenWrt-nikki feeds/package/OpenWrt-nikki
-git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon feeds/package/luci-theme-argon
-git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config feeds/package/luci-app-argon-config
-git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git feeds/package/lucky
-git clone --depth=1 https://github.com/vernesong/OpenClash feeds/package/OpenClash
-git clone --depth=1 https://github.com/gaoderby/luci-app-kms.git feeds/package/luci-app-kms
+git clone --depth=1 https://github.com/nikkinikki-org/OpenWrt-nikki feeds/luci/applications/OpenWrt-nikki
+git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon feeds/luci/applications/luci-theme-argon
+git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config
+git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git feeds/luci/applications/lucky
+git clone --depth=1 https://github.com/vernesong/OpenClash feeds/luci/applications/OpenClash
+git clone --depth=1 https://github.com/gaoderby/luci-app-kms.git feeds/luci/applications/luci-app-kms
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
