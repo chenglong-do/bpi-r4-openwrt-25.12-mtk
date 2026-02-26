@@ -36,6 +36,8 @@ git clone --depth=1 https://github.com/gaoderby/luci-app-kms.git feeds/luci/appl
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
+sed -i 's/--set=llvm.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' package/feeds/packages/rust/Makefile
+
 #\cp -r ../my_files/qmi.sh package/network/utils/uqmi/files/lib/netifd/proto/
 #chmod -R 755 package/network/utils/uqmi/files/lib/netifd/proto
 chmod -R 755 feeds/luci/applications/luci-app-modemdata/root
