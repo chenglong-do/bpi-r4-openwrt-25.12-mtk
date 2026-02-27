@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  actions: write
+  contents: read
 
 jobs:
   build:
@@ -60,15 +61,36 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const artifacts = await github.rest.actions.listArtifactsForRepo({ owner, repo, per_page: 100 });
-            for (const artifact of artifacts.data.artifacts) {
-              if (artifact.name === 'openwrt-bpi-r4-6.12-images') {
-                await github.rest.actions.deleteArtifact({
-                  owner,
-                  repo,
-                  artifact_id: artifact.id,
-                });
+            try {
+              // 获取仓库中的所有 artifact（分页获取，避免遗漏）
+              const artifacts = await github.rest.actions.listArtifactsForRepo({ 
+                owner, 
+                repo, 
+                per_page: 100 
+              });
+              
+              // 遍历并删除指定名称的 artifact
+              for (const artifact of artifacts.data.artifacts) {
+                if (artifact.name === 'openwrt-bpi-r4-6.12-images') {
+                  console.log(`Deleting artifact: ${artifact.name} (ID: ${artifact.id})`);
+                  try {
+                    await github.rest.actions.deleteArtifact({
+                      owner,
+                      repo,
+                      artifact_id: artifact.id,
+                    });
+                    console.log(`Successfully deleted artifact ${artifact.id}`);
+                  } catch (deleteError) {
+                    console.error(`Failed to delete artifact ${artifact.id}:`, deleteError.message);
+                    // 继续执行，不中断其他 artifact 的删除
+                    continue;
+                  }
+                }
               }
+            } catch (listError) {
+              console.error('Failed to list artifacts:', listError.message);
+              // 可选：如果获取列表失败，是否终止流程
+              // throw listError;
             }
 
       - name: Cleanup build output
@@ -143,15 +165,15 @@ jobs:
               per_page: 100
             });
 
-            // v�echny releasy s tagem bpi-r4-latest
+            // všechny releasy s tagem bpi-r4-latest
             const autoReleases = releases.data.filter(
               rel => rel.tag_name === 'bpi-r4-latest'
             );
 
-            // se�adit (nejnov�j�� prvn�)
+            // seøadit (nejnovìjší první)
             autoReleases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-            // nechat nejnov�j��, ostatn� smazat
+            // nechat nejnovìjší, ostatní smazat
             const toDelete = autoReleases.slice(1);
 
             for (const rel of toDelete) {
