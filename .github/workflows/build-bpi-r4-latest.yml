@@ -14,27 +14,74 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Before freeing up disk space
+        run: |
+          echo "Before freeing up disk space"
+          echo "=============================================================================="
+          df -hT
+          echo "=============================================================================="
+  
+      - name: "Optimize Disk Space"
+        uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.1"
+        with:
+          operate_sudo: "True"
+          general_include: ".+"
+          general_exclude: |-
+            ^GCC$
+            ^G\+\+$
+            Clang
+            LLVM
+          docker_include: ".+"
+          docker_prune: "True"
+          docker_clean: "True"
+          apt_prune: "True"
+          apt_clean: "True"
+          homebrew_prune: "True"
+          homebrew_clean: "True"
+          npm_prune: "True"
+          npm_clean: "True"
+          os_swap: "True"
+  
+      - name: Freeing up disk space
+        uses: easimon/maximize-build-space@master
+        with: 
+          root-reserve-mb: 3072
+          swap-size-mb: 1
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+  
+      - name: Free up disk space complete
+        run: |
+          echo "Free up disk space complete"
+          echo "=============================================================================="
+          df -hT
+          echo "=============================================================================="
+
+    
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Free disk space on runner
-        run: |
-          sudo rm -rf \
-            "$AGENT_TOOLSDIRECTORY" \
-            /opt/ghc \
-            /opt/google/chrome \
-            /opt/microsoft/msedge \
-            /opt/microsoft/powershell \
-            /opt/pipx \
-            /usr/lib/mono \
-            /usr/local/julia* \
-            /usr/local/lib/android \
-            /usr/local/lib/node_modules \
-            /usr/local/share/chromium \
-            /usr/local/share/powershell \
-            /usr/share/dotnet \
-            /usr/share/swift
-          df -h
+      # - name: Free disk space on runner
+      #   run: |
+      #     sudo rm -rf \
+      #       "$AGENT_TOOLSDIRECTORY" \
+      #       /opt/ghc \
+      #       /opt/google/chrome \
+      #       /opt/microsoft/msedge \
+      #       /opt/microsoft/powershell \
+      #       /opt/pipx \
+      #       /usr/lib/mono \
+      #       /usr/local/julia* \
+      #       /usr/local/lib/android \
+      #       /usr/local/lib/node_modules \
+      #       /usr/local/share/chromium \
+      #       /usr/local/share/powershell \
+      #       /usr/share/dotnet \
+      #       /usr/share/swift
+      #     df -h
 
       - name: Install build dependencies
         run: |
@@ -44,8 +91,8 @@ jobs:
             gettext libncurses-dev libssl-dev python3-distutils python3-setuptools \
             rsync swig unzip zlib1g-dev file wget libelf-dev ccache git
 
-      - name: Show disk space
-        run: df -h
+      # - name: Show disk space
+      #   run: df -h
 
       - name: Run builder script
         run: |
@@ -57,43 +104,43 @@ jobs:
         run: |
           ls -R openwrt/bin/targets || true
 
-      - name: Delete old artifacts with same name (latest)
-        if: success()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            try {
-              // 获取仓库中的所有 artifact（分页获取，避免遗漏）
-              const artifacts = await github.rest.actions.listArtifactsForRepo({ 
-                owner, 
-                repo, 
-                per_page: 100 
-              });
+      # - name: Delete old artifacts with same name (latest)
+      #   if: success()
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const { owner, repo } = context.repo;
+      #       try {
+      #         // 获取仓库中的所有 artifact（分页获取，避免遗漏）
+      #         const artifacts = await github.rest.actions.listArtifactsForRepo({ 
+      #           owner, 
+      #           repo, 
+      #           per_page: 100 
+      #         });
               
-              // 遍历并删除指定名称的 artifact
-              for (const artifact of artifacts.data.artifacts) {
-                if (artifact.name === 'openwrt-bpi-r4-6.12-images') {
-                  console.log(`Deleting artifact: ${artifact.name} (ID: ${artifact.id})`);
-                  try {
-                    await github.rest.actions.deleteArtifact({
-                      owner,
-                      repo,
-                      artifact_id: artifact.id,
-                    });
-                    console.log(`Successfully deleted artifact ${artifact.id}`);
-                  } catch (deleteError) {
-                    console.error(`Failed to delete artifact ${artifact.id}:`, deleteError.message);
-                    // 继续执行，不中断其他 artifact 的删除
-                    continue;
-                  }
-                }
-              }
-            } catch (listError) {
-              console.error('Failed to list artifacts:', listError.message);
-              // 可选：如果获取列表失败，是否终止流程
-              // throw listError;
-            }
+      #         // 遍历并删除指定名称的 artifact
+      #         for (const artifact of artifacts.data.artifacts) {
+      #           if (artifact.name === 'openwrt-bpi-r4-6.12-images') {
+      #             console.log(`Deleting artifact: ${artifact.name} (ID: ${artifact.id})`);
+      #             try {
+      #               await github.rest.actions.deleteArtifact({
+      #                 owner,
+      #                 repo,
+      #                 artifact_id: artifact.id,
+      #               });
+      #               console.log(`Successfully deleted artifact ${artifact.id}`);
+      #             } catch (deleteError) {
+      #               console.error(`Failed to delete artifact ${artifact.id}:`, deleteError.message);
+      #               // 继续执行，不中断其他 artifact 的删除
+      #               continue;
+      #             }
+      #           }
+      #         }
+      #       } catch (listError) {
+      #         console.error('Failed to list artifacts:', listError.message);
+      #         // 可选：如果获取列表失败，是否终止流程
+      #         // throw listError;
+      #       }
 
       - name: Cleanup build output
         if: success()
@@ -111,34 +158,34 @@ jobs:
         if: success()
         run: |
           cd openwrt/bin/targets/mediatek/filogic
-          zip -r openwrt-bpi-r4-6.12-images.zip .
+          zip -r openwrt-bpi-r4-25.12-images.zip .
 
       - name: Set short SHA and tag
         id: vars
         run: |
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "tag_name=bpi-r4-commit-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "release_tag=bpi-r4-25.12-mtk${{ env.date2 }}" >> $GITHUB_OUTPUT
+          echo "date1=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+          echo "date2=$(date "+%Y-%m-%d")" >> $GITHUB_ENV
 
       - name: Upload firmware artifacts (latest)
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: openwrt-bpi-r4-6.12-images
+          name: openwrt-bpi-r4-25.12-images-${{ env.date1 }}
           path: openwrt/bin/targets/mediatek/filogic/
 
       - name: Create or update GitHub Release (latest)
         if: success()
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: bpi-r4-latest
-          name: BPI-R4 manual build (latest)
+          tag_name: ${{ steps.vars.outputs.release_tag }}
+          name: ${{ steps.vars.outputs.release_tag }}
           body: |
-            Built from ref: ${GITHUB_SHA}
+             
           draft: false
           prerelease: false
           files: |
-            openwrt/bin/targets/mediatek/filogic/openwrt-bpi-r4-6.12-images.zip
+            openwrt/bin/targets/mediatek/filogic/openwrt-bpi-r4-25.12-images.zip
             openwrt/bin/targets/mediatek/filogic/config.buildinfo
             openwrt/bin/targets/mediatek/filogic/feeds.buildinfo
             openwrt/bin/targets/mediatek/filogic/mt7988-ram-ddr4-bl2.bin
@@ -153,39 +200,49 @@ jobs:
             openwrt/bin/targets/mediatek/filogic/sha256sums
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete older releases (keep latest)
-        if: success()
-        uses: actions/github-script@v7
+      
+      - name: Delete releases and workflows runs
+        uses: ophub/delete-releases-workflows@main
         with:
-          script: |
-            const { owner, repo } = context.repo;
+          delete_releases: true
+          releases_keep_latest: 3
+          delete_tags: true
+          delete_workflows: true
+          workflows_keep_day: 3
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+      
+      # - name: Delete older releases (keep latest)
+      #   if: success()
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const { owner, repo } = context.repo;
 
-            const releases = await github.rest.repos.listReleases({
-              owner,
-              repo,
-              per_page: 100
-            });
+      #       const releases = await github.rest.repos.listReleases({
+      #         owner,
+      #         repo,
+      #         per_page: 100
+      #       });
 
-            // všechny releasy s tagem bpi-r4-latest
-            const autoReleases = releases.data.filter(
-              rel => rel.tag_name === 'bpi-r4-latest'
-            );
+      #       // všechny releasy s tagem bpi-r4-latest
+      #       const autoReleases = releases.data.filter(
+      #         rel => rel.tag_name === 'bpi-r4-latest'
+      #       );
 
-            // seøadit (nejnovìjší první)
-            autoReleases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      #       // seøadit (nejnovìjší první)
+      #       autoReleases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-            // nechat nejnovìjší, ostatní smazat
-            const toDelete = autoReleases.slice(1);
+      #       // nechat nejnovìjší, ostatní smazat
+      #       const toDelete = autoReleases.slice(1);
 
-            for (const rel of toDelete) {
-              await github.rest.repos.deleteRelease({
-                owner,
-                repo,
-                release_id: rel.id
-              }).catch(e => {
-                console.log(`Failed to delete release ${rel.id}: ${e.message}`);
-              });
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #       for (const rel of toDelete) {
+      #         await github.rest.repos.deleteRelease({
+      #           owner,
+      #           repo,
+      #           release_id: rel.id
+      #         }).catch(e => {
+      #           console.log(`Failed to delete release ${rel.id}: ${e.message}`);
+      #         });
+      #       }
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
