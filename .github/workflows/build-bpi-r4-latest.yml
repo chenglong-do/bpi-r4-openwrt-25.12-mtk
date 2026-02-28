@@ -1,6 +1,8 @@
 name: Build OpenWrt (BPI-R4, 6.12, latest)
 
 on:
+  schedule:
+    - cron: 0 12 * * *
   workflow_dispatch:
 
 permissions:
