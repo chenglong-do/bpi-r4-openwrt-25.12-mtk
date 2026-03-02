@@ -66,33 +66,6 @@ jobs:
     
       - name: Checkout repository
         uses: actions/checkout@main
-
-      # - name: Free disk space on runner
-      #   run: |
-      #     sudo rm -rf \
-      #       "$AGENT_TOOLSDIRECTORY" \
-      #       /opt/ghc \
-      #       /opt/google/chrome \
-      #       /opt/microsoft/msedge \
-      #       /opt/microsoft/powershell \
-      #       /opt/pipx \
-      #       /usr/lib/mono \
-      #       /usr/local/julia* \
-      #       /usr/local/lib/android \
-      #       /usr/local/lib/node_modules \
-      #       /usr/local/share/chromium \
-      #       /usr/local/share/powershell \
-      #       /usr/share/dotnet \
-      #       /usr/share/swift
-      #     df -h
-
-      # - name: Install build dependencies
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y \
-      #       build-essential clang flex bison g++ gawk gcc-multilib g++-multilib \
-      #       gettext libncurses-dev libssl-dev python3-distutils python3-setuptools \
-      #       rsync swig unzip zlib1g-dev file wget libelf-dev ccache git
       
       - name: Initialize the compilation environment
         env:
@@ -107,9 +80,6 @@ jobs:
           sudo -E apt-get -qq clean ) &
           sudo timedatectl set-timezone "$TZ"
 
-      # - name: Show disk space
-      #   run: df -h
-
       - name: Run builder script
         run: |
           chmod +x ./bpi-r4-openwrt-builder.sh
@@ -119,44 +89,6 @@ jobs:
         if: always()
         run: |
           ls -R openwrt/bin/targets || true
-
-      # - name: Delete old artifacts with same name (latest)
-      #   if: success()
-      #   uses: actions/github-script@v7
-      #   with:
-      #     script: |
-      #       const { owner, repo } = context.repo;
-      #       try {
-      #         // 获取仓库中的所有 artifact（分页获取，避免遗漏）
-      #         const artifacts = await github.rest.actions.listArtifactsForRepo({ 
-      #           owner, 
-      #           repo, 
-      #           per_page: 100 
-      #         });
-              
-      #         // 遍历并删除指定名称的 artifact
-      #         for (const artifact of artifacts.data.artifacts) {
-      #           if (artifact.name === 'openwrt-bpi-r4-6.12-images') {
-      #             console.log(`Deleting artifact: ${artifact.name} (ID: ${artifact.id})`);
-      #             try {
-      #               await github.rest.actions.deleteArtifact({
-      #                 owner,
-      #                 repo,
-      #                 artifact_id: artifact.id,
-      #               });
-      #               console.log(`Successfully deleted artifact ${artifact.id}`);
-      #             } catch (deleteError) {
-      #               console.error(`Failed to delete artifact ${artifact.id}:`, deleteError.message);
-      #               // 继续执行，不中断其他 artifact 的删除
-      #               continue;
-      #             }
-      #           }
-      #         }
-      #       } catch (listError) {
-      #         console.error('Failed to list artifacts:', listError.message);
-      #         // 可选：如果获取列表失败，是否终止流程
-      #         // throw listError;
-      #       }
 
       - name: Cleanup build output
         if: success()
@@ -176,27 +108,34 @@ jobs:
           cd openwrt/bin/targets/mediatek/filogic
           zip -r openwrt-bpi-r4-25.12-images.zip .
 
-      - name: Set short SHA and tag
+      - name: Set variables
         id: vars
         run: |
-          echo "date1=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
-          echo "date2=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-          echo "release_tag=bpi-r4-25.12-mtk${{ env.date2 }}" >> $GITHUB_OUTPUT
+          D1=$(date +'%Y.%m.%d')
+          D2=$(date +'%Y-%m-%d')
+          echo "date1=$D1" >> $GITHUB_ENV
+          echo "date2=$D2" >> $GITHUB_ENV
+          echo "release_tag=bpi-r4-25.12-mtk-$D2" >> $GITHUB_ENV
 
-      - name: Upload firmware artifacts (latest)
+      - name: Upload firmware artifacts
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: openwrt-bpi-r4-25.12-images-${{ env.date1 }}
+          name: openwrt-bpi-r4-25.12-images-${{ env.date2 }}
           path: openwrt/bin/targets/mediatek/filogic/
 
-      - name: Create or update GitHub Release (latest)
+      - name: Create or update GitHub Release
         if: success()
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.vars.outputs.release_tag }}
-          name: BPI-R4 Firmware (${{ steps.vars.outputs.release_tag }})
-          body: "Built on ${{ env.date2 }}\nCommit SHA: ${{ github.sha }}"
+          tag_name: ${{ env.release_tag }}
+          name: BPI-R4 Firmware (${{ env.date2 }})
+          body: |
+            ### 编译信息
+            - **编译日期**: ${{ env.date2 }}
+            - **固件版本**: openwrt 25.12 with mtd sdk
+            - **设备型号**: Banana Pi BPI-R4
+            - **Commit**: ${{ github.sha }}
           draft: false
           prerelease: false
           files: |
@@ -226,38 +165,3 @@ jobs:
           workflows_keep_day: 3
           gh_token: ${{ secrets.GITHUB_TOKEN }}
       
-      # - name: Delete older releases (keep latest)
-      #   if: success()
-      #   uses: actions/github-script@v7
-      #   with:
-      #     script: |
-      #       const { owner, repo } = context.repo;
-
-      #       const releases = await github.rest.repos.listReleases({
-      #         owner,
-      #         repo,
-      #         per_page: 100
-      #       });
-
-      #       // všechny releasy s tagem bpi-r4-latest
-      #       const autoReleases = releases.data.filter(
-      #         rel => rel.tag_name === 'bpi-r4-latest'
-      #       );
-
-      #       // seøadit (nejnovìjší první)
-      #       autoReleases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-      #       // nechat nejnovìjší, ostatní smazat
-      #       const toDelete = autoReleases.slice(1);
-
-      #       for (const rel of toDelete) {
-      #         await github.rest.repos.deleteRelease({
-      #           owner,
-      #           repo,
-      #           release_id: rel.id
-      #         }).catch(e => {
-      #           console.log(`Failed to delete release ${rel.id}: ${e.message}`);
-      #         });
-      #       }
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
