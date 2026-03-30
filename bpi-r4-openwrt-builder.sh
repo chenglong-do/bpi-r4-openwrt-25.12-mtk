@@ -5,7 +5,7 @@ rm -rf openwrt
 rm -rf mtk-openwrt-feeds
 
 git clone --branch openwrt-25.12 https://github.com/openwrt/openwrt.git openwrt
-cd openwrt; git checkout f3a9a42c335714b43615ad14ca76e342d8ff791a; cd -;		#OpenWrt v25.12.1: revert to branch defaults
+cd openwrt; git checkout b21cfa8f8ccd8ccb89c9a735b9566fff29dc61a7; cd -;		#odhcpd: update to 25.12 Git HEAD (2026-03-16)
 
 git clone --branch master https://git01.mediatek.com/openwrt/feeds/mtk-openwrt-feeds
 cd mtk-openwrt-feeds; git checkout 24595844f63aebb6ccb9bcd28d9690dbfc541a46; cd -;	#[MAC80211][kernel-6.12][wed][Refactor wed msdu page ring init for next generation wifi chip compatible]
@@ -27,17 +27,17 @@ cd openwrt
 bash ../mtk-openwrt-feeds/autobuild/unified/autobuild.sh filogic-mac80211-mt798x_rfb-wifi7_nic prepare
 
 \cp -r ../my_files/sms-tool/ feeds/packages/utils/sms-tool
-\cp -r ../my_files/modemdata-main/ feeds/packages/utils/modemdata 
+\cp -r ../my_files/modemdata-main/ feeds/packages/utils/modemdata
 \cp -r ../my_files/luci-app-modemdata-main/luci-app-modemdata/ feeds/luci/applications
 \cp -r ../my_files/luci-app-lite-watchdog/ feeds/luci/applications
 \cp -r ../my_files/luci-app-sms-tool-js-main/luci-app-sms-tool-js/ feeds/luci/applications
+\cp -r ../my_files/luci-app-vlmcsd feeds/luci/applications
 
 git clone --depth=1 https://github.com/nikkinikki-org/OpenWrt-nikki feeds/luci/applications/OpenWrt-nikki
 git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon feeds/luci/applications/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config
 git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git feeds/luci/applications/lucky
 git clone --depth=1 https://github.com/vernesong/OpenClash feeds/luci/applications/OpenClash
-git clone --depth=1 https://github.com/gaoderby/luci-app-kms.git feeds/luci/applications/luci-app-kms
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
@@ -48,12 +48,10 @@ sed -i 's/--set=llvm.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' p
 chmod -R 755 package/network/utils/uqmi/files/lib/netifd/proto
 chmod -R 755 feeds/luci/applications/luci-app-modemdata/root
 chmod -R 755 feeds/luci/applications/luci-app-sms-tool-js/root
+chmod -R 755 feeds/luci/applications/luci-app-vlmcsd/root
 chmod -R 755 feeds/packages/utils/modemdata/files/usr/share
 
-#\cp -r ../my_files/my_final_defconfig .config
-\cp -r ../configs/config.hnat.la .config
+\cp -r ../configs/.config .config
 make defconfig
 
 bash ../mtk-openwrt-feeds/autobuild/unified/autobuild.sh filogic-mac80211-mt798x_rfb-wifi7_nic build
-
-
