@@ -102,11 +102,25 @@ jobs:
             [ "$f" = "mt7988-ram-ddr4-bl2.bin" ] || rm -f "$f"
           done
 
+      - name: Collect APK packages
+        if: success()
+        run: |
+          mkdir -p openwrt/bin/apk-packages
+          # 收集所有 feed 的 apk 软件包
+          find openwrt/bin/packages/ -name "*.apk" -exec cp {} openwrt/bin/apk-packages/ \; 2>/dev/null || true
+          # 收集 targets 下的 apk 软件包
+          find openwrt/bin/targets/ -path "*/packages/*.apk" -exec cp {} openwrt/bin/apk-packages/ \; 2>/dev/null || true
+          echo "Collected APK packages:"
+          ls -lh openwrt/bin/apk-packages/ | head -100
+          echo "Total: $(ls openwrt/bin/apk-packages/*.apk 2>/dev/null | wc -l) packages"
+          cd openwrt/bin/apk-packages
+          zip -r ../targets/mediatek/filogic/openwrt-bpi-r4-25.12-apk-packages.zip .
+
       - name: Create ZIP with all images
         if: success()
         run: |
           cd openwrt/bin/targets/mediatek/filogic
-          zip -r openwrt-bpi-r4-25.12-images.zip .
+          zip -r openwrt-bpi-r4-25.12-images.zip . -x "openwrt-bpi-r4-25.12-apk-packages.zip"
 
       - name: Set variables
         id: vars
@@ -136,10 +150,15 @@ jobs:
             - **固件版本**: openwrt 25.12 with mtd sdk
             - **设备型号**: Banana Pi BPI-R4
             - **Commit**: ${{ github.sha }}
+
+            ### 下载说明
+            - `openwrt-bpi-r4-25.12-images.zip` — 固件镜像合集
+            - `openwrt-bpi-r4-25.12-apk-packages.zip` — LuCI 应用及所有软件包（APK 格式）
           draft: false
           prerelease: false
           files: |
             openwrt/bin/targets/mediatek/filogic/openwrt-bpi-r4-25.12-images.zip
+            openwrt/bin/targets/mediatek/filogic/openwrt-bpi-r4-25.12-apk-packages.zip
             openwrt/bin/targets/mediatek/filogic/config.buildinfo
             openwrt/bin/targets/mediatek/filogic/feeds.buildinfo
             openwrt/bin/targets/mediatek/filogic/mt7988-ram-ddr4-bl2.bin
