@@ -26,7 +26,7 @@ bash ../mtk-openwrt-feeds/autobuild/unified/autobuild.sh filogic-mac80211-mt798x
 \cp ../my_files/454-w-add-bpi-r4-nvme-env.patch package/boot/uboot-mediatek/patches/454-add-bpi-r4-nvme-env.patch
 \cp -r ../my_files/w-nand-mmc-filogic.mk target/linux/mediatek/image/filogic.mk
 
-echo "CONFIG_BLK_DEV_NVME=y" >> target/linux/mediatek/filogic/config-6.12
+#echo "CONFIG_BLK_DEV_NVME=y" >> target/linux/mediatek/filogic/config-6.12
 
 \cp -r ../my_files/sms-tool/ feeds/packages/utils/sms-tool
 \cp -r ../my_files/modemdata-main/ feeds/packages/utils/modemdata
@@ -61,3 +61,5 @@ chmod -R 755 feeds/packages/utils/modemdata/files/usr/share
 make defconfig
 
 bash ../mtk-openwrt-feeds/autobuild/unified/autobuild.sh filogic-mac80211-mt798x_rfb-wifi7_nic build
+
+
