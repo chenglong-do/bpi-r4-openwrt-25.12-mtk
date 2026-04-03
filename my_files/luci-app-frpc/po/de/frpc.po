@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-03-24 19:09+0000\n"
-"Last-Translator: HerbJul <19JulianHerbst95@web.de>\n"
+"PO-Revision-Date: 2026-01-11 05:02+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrpc/de/>\n"
 "Language: de\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17-dev\n"
+"X-Generator: Weblate 5.15.1\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:214
 msgid "Add new proxy..."
@@ -43,8 +43,8 @@ msgid ""
 "AdminAddr specifies the address that the admin server binds to.<br />By "
 "default, this value is \"0.0.0.0\"."
 msgstr ""
-"AdminAddr specifies the address that the admin server binds to.<br />By "
-"default, this value is \"0.0.0.0\"."
+"AdminAddr spezifiziert die Adresse auf der der Admin-Server lauscht.<br /"
+">Standard für diesen Wert ist \"0.0.0.0\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:29
 msgid ""
@@ -89,7 +89,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:72
 msgid "Bind addr"
-msgstr "Adresse binden"
+msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:73
 msgid "Bind port"
@@ -279,10 +279,9 @@ msgid ""
 "before deletion. This is only used if LogWay == \"file\".<br />By default, "
 "this value is 0."
 msgstr ""
-"LogMaxDays gibt die maximale Anzahl von Tagen an, für die "
+"LogMaxDays gibt die maximale Anzahl von Tagen an, die die "
 "Protokollinformationen vor dem Löschen gespeichert werden sollen. Dies wird "
-"nur verwendet, wenn LogWay == „file“ ist.<br/>Standardmäßig ist dieser Wert "
-"0."
+"nur verwendet, wenn LogWay == \"file\".<br />Standardmäßig ist dieser Wert 0."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:35
 msgid ""
@@ -300,7 +299,7 @@ msgstr "LÄUFT NICHT"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:15
 msgid "OS environments pass to frp for config file template, see %s."
-msgstr "OS-Umgebungen für config Dateivorlage an frp übergeben, siehe %s."
+msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:78
 msgid "Plugin"
@@ -320,9 +319,6 @@ msgid ""
 "Valid values are \"tcp\", \"kcp\", \"quic\" and \"websocket\".<br />By "
 "default, this value is \"tcp\"."
 msgstr ""
-"Protokoll gibt das Protokoll an, das bei der Interaktion mit dem Server "
-"verwendet werden soll. Gültige Werte sind \"tcp\", \"kcp\", \"quic\" und "
-"\"websocket\".<br /> Standardmäßig ist dieser Wert \"tcp\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:210
 msgid "Proxy Settings"
@@ -344,8 +340,6 @@ msgid ""
 "\"udp\", \"http\", \"https\", \"stcp\" and \"xtcp\".<br />By default, this "
 "value is \"tcp\"."
 msgstr ""
-"ProxyType gibt den Typ dieses Proxys an. Gültige Werte sind „tcp“, „udp“, „"
-"http“, „https“, „stcp“ und „xtcp“.<br/>Standardmäßig ist dieser Wert „tcp“."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:163
 msgid "RUNNING"
@@ -434,8 +428,6 @@ msgid ""
 "TLS Enable specifies whether or not TLS should be used when communicating "
 "with the server."
 msgstr ""
-"TLS Enable gibt an, ob TLS bei der Kommunikation mit dem Server verwendet "
-"werden soll oder nicht."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:33
 msgid ""
@@ -514,37 +506,3 @@ msgstr ""
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "frp Client"
-
-#~ msgid ""
-#~ "OS environments pass to frp for config file template, see <a "
-#~ "href=\"https://github.com/fatedier/frp#configuration-file-template\">frp "
-#~ "README</a>"
-#~ msgstr ""
-#~ "Betriebssystemumgebungsvariablen welche an frp für das Konfig-Datei-"
-#~ "Template weitergereicht werden, siehe <a href=\"https://github.com/"
-#~ "fatedier/frp#configuration-file-template\">frp README</a>"
-
-#~ msgid ""
-#~ "Protocol specifies the protocol to use when interacting with the server. "
-#~ "Valid values are \"tcp\", \"kcp\", and \"websocket\".<br />By default, "
-#~ "this value is \"tcp\"."
-#~ msgstr ""
-#~ "Protocol spezifiziert das Protokoll welches zur Interaktion mit dem "
-#~ "Server verwendet werden soll. Gültige Werte sind \"tcp\", \"kcp\" und "
-#~ "\"websocket\".<br />Standardwert hierfür ist \"tcp\"."
-
-#~ msgid ""
-#~ "ProxyType specifies the type of this proxy. Valid values include \"tcp\", "
-#~ "\"udp\", \"http\", \"https\", \"stcp\", and \"xtcp\".<br />By default, "
-#~ "this value is \"tcp\"."
-#~ msgstr ""
-#~ "ProxyType spezifiziert den Typ des Proxyservers. Gültige Werte beinhalten "
-#~ "\"tcp\", \"udp\", \"https\", \"stcp\" und \"xtcp\".<br />Standardwert "
-#~ "hierfür ist \"tcp\"."
-
-#~ msgid ""
-#~ "TLSEnable specifies whether or not TLS should be used when communicating "
-#~ "with the server."
-#~ msgstr ""
-#~ "TLSEnable spezifiziert ob TLS bei der Kommunikation mit dem Server "
-#~ "verwendet werden soll."
