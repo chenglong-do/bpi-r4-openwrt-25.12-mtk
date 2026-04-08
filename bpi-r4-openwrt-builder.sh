@@ -34,15 +34,16 @@ bash ../mtk-openwrt-feeds/autobuild/unified/autobuild.sh filogic-mac80211-mt7988
 # \cp -r ../my_files/luci-app-modemdata-main/luci-app-modemdata/ feeds/luci/applications
 \cp -r ../my_files/luci-app-lite-watchdog/ feeds/luci/applications
 \cp -r ../my_files/luci-app-sms-tool-js-main/luci-app-sms-tool-js/ feeds/luci/applications
-\cp -r ../my_files/luci-app-vlmcsd feeds/luci/applications
 \cp -r ../my_files/luci-app-cpufreq feeds/luci/applications
 \cp -r ../my_files/luci-app-frpc feeds/luci/applications
 
+#echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main" >> "feeds.conf.default"
 git clone --depth=1 https://github.com/nikkinikki-org/OpenWrt-nikki feeds/luci/applications/OpenWrt-nikki
 git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon feeds/luci/applications/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config
 git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git feeds/luci/applications/lucky
 git clone --depth=1 https://github.com/vernesong/OpenClash feeds/luci/applications/OpenClash
+echo "src-git kms https://github.com/gaoderby/luci-app-kms.git;main" >> "feeds.conf.default"
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
@@ -53,7 +54,6 @@ sed -i 's/--set=llvm.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' p
 # chmod -R 755 package/network/utils/uqmi/files/lib/netifd/proto
 # chmod -R 755 feeds/luci/applications/luci-app-modemdata/root
 # chmod -R 755 feeds/luci/applications/luci-app-sms-tool-js/root
-chmod -R 755 feeds/luci/applications/luci-app-vlmcsd/root
 chmod -R 755 feeds/luci/applications/luci-app-cpufreq/root
 chmod -R 755 feeds/luci/applications/luci-app-frpc/root
 # chmod -R 755 feeds/packages/utils/modemdata/files/usr/share
