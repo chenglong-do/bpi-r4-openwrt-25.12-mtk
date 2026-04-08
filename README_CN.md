@@ -9,8 +9,9 @@
 ---
 
 ## 本分支的改动：
-- CPU 超频至 2.2 GHz（添加了 2.0 GHz @ 950mV 和 2.2 GHz @ 1000mV 频率档位）
-- 预装 LuCI 应用：Argon 主题、Lucky、Nikki、OpenClash、cpufreq、mwan3、sqm、statistics、ttyd 等（完整列表见 [my_final_defconfig](my_files/my_final_defconfig)）
+
+- 预装 LuCI 应用：Argon 主题、Lucky等
+- 移除 Wi-Fi 和移动网络支持
 
 [English README](README.md)
 

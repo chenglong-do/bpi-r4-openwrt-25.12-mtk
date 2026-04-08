@@ -7,8 +7,9 @@ Goal: you do not need a local build machine. You can trigger the build on GitHub
 Use the latest workflow for normal builds, and the commit workflow only if you know you need a specific commit/branch/tag.
 
 ## Changes in this fork:
-- CPU overclocked to 2.2 GHz (added 2.0 GHz @ 950mV and 2.2 GHz @ 1000mV operating points)
-- Pre-installed LuCI apps: Argon theme, Lucky, Nikki, OpenClash, cpufreq, mwan3, sqm, statistics, ttyd, and many more (see [my_final_defconfig](my_files/my_final_defconfig) for full list)
+
+- Pre-installed LuCI apps: Argon theme, Lucky, Nikki, OpenClash
+- Remove wifi and mobile support
 
 [中文说明](README_CN.md)
 
